@@ -14,3 +14,15 @@ Jimenez Barajas Miguel Adrian
 
 Correo:Example@example.com
 Contraseña:Example
+
+Modulos Activos con firebase:
+Vehiculos
+Cortes
+Empleados
+Usuarios
+
+Modulos Inactivos con firebase:
+Asistencia
+Nominas
+Ranchos
+Inventario
