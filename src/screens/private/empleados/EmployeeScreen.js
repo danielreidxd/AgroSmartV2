@@ -6,8 +6,9 @@ import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import * as ImagePicker from 'expo-image-picker';
 
+
 function EmployeeScreen({ navigation }) {
-  const [employees, setEmployees] = useState([]);
+  const [employees, setEmployees] = useState<Empleyees>([]);
   const [registerModalVisible, setRegisterModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);

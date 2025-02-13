@@ -3,17 +3,17 @@ import 'react-native-gesture-handler';
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import LoginScreen from './screens/LoginScreen';
-import MenuPrincipalScreen from './screens/MenuPrincipalScreen';
-import UserScreen from './screens/UserScreen';
-import EmployeeScreen from './screens/EmployeeScreen';
-import RanchosScreen from './screens/RanchosScreen';
-import VehiculosScreen from './screens/VehiculosScreen'; 
-import InventarioScreen from './screens/InventarioScreen';
-import AsistenciaScreen from './screens/AsistenciaScreen';
-import ContactosScreen from './screens/ContactosScreen';
-import ContactosDispositivoScreen from './screens/ContactosDispositivoScreen';
-import CortesScreen from './screens/CortesScreen';
+import Login from './src/screens/public/login';
+import MenuPrincipalScreen from './src/screens/MenuPrincipalScreen';
+import UserScreen from './src/private/screens/usuarios/UserScreen';
+import EmployeeScreen from './src/private/screens/empleados/EmployeeScreen';
+import RanchosScreen from './src/private/screens/ranchos/RanchosScreen';
+import VehiculosScreen from './src/private/screens/vehiculos/VehiculosScreen'; 
+import InventarioScreen from './src/private/screens/inventario/InventarioScreen';
+import AsistenciaScreen from './src/private/screens/asistencias/AsistenciaScreen';
+import ContactosScreen from './src/private/screens/contactos/ContactosScreen';
+import ContactosDispositivoScreen from './src/private/screens/contactos/ContactosDispositivoScreen';
+import CortesScreen from './src/private/screens/cortes/CortesScreen';
 
 // Creamos el Stack Navigator
 const Stack = createStackNavigator();
@@ -22,7 +22,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="MenuPrincipal" component={MenuPrincipalScreen} />
         <Stack.Screen name="Usuarios" component={UserScreen} />
         <Stack.Screen name="Empleados" component={EmployeeScreen} />

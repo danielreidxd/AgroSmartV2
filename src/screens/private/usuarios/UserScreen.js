@@ -4,30 +4,20 @@ import { Ionicons } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword, deleteUser } from 'firebase/auth';
 import { auth, db } from '../firebaseConfig';
 import { collection, getDocs, doc, setDoc, deleteDoc } from 'firebase/firestore';
+import  Usuario from "../../../models/Usuario.model.ts"
+import { getUsers } from '../../../services/Usuarios.service.js';
 
 function UserScreen({ navigation }) {
   const [registerModalVisible, setRegisterModalVisible] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<Usuario>([]);
 
   useEffect(() => {
-    fetchUsers();
+    setUsers = getUsers();
   }, []);
 
-  const fetchUsers = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(db, 'users'));
-      const userList = [];
-      querySnapshot.forEach((doc) => {
-        userList.push({ id: doc.id, ...doc.data() });
-      });
-      setUsers(userList);
-    } catch (error) {
-      Alert.alert('Error', 'No se pudieron cargar los usuarios.');
-    }
-  };
 
   const handleRegister = async () => {
     if (!email || !password || !name) {
