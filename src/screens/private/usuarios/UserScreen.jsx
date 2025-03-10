@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, TextInput, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword, deleteUser } from 'firebase/auth';
-import { auth, db } from '../firebaseConfig';
+import { auth, db } from '../../../../firebaseConfig';
 import { collection, getDocs, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import  Usuario from "../../../models/Usuario.model.ts"
 import { getUsers } from '../../../services/Usuarios.service.js';

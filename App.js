@@ -1,19 +1,18 @@
-// App.js
 import 'react-native-gesture-handler';
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import Login from './src/screens/public/login';
-import MenuPrincipalScreen from './src/screens/MenuPrincipalScreen';
-import UserScreen from './src/private/screens/usuarios/UserScreen';
-import EmployeeScreen from './src/private/screens/empleados/EmployeeScreen';
-import RanchosScreen from './src/private/screens/ranchos/RanchosScreen';
-import VehiculosScreen from './src/private/screens/vehiculos/VehiculosScreen'; 
-import InventarioScreen from './src/private/screens/inventario/InventarioScreen';
-import AsistenciaScreen from './src/private/screens/asistencias/AsistenciaScreen';
-import ContactosScreen from './src/private/screens/contactos/ContactosScreen';
-import ContactosDispositivoScreen from './src/private/screens/contactos/ContactosDispositivoScreen';
-import CortesScreen from './src/private/screens/cortes/CortesScreen';
+import Login from './src/screens/public/Login.jsx';
+import MenuPrincipalScreen from './src/screens/private/MenuPrincipalScreen.jsx';
+import UserScreen from './src/screens/private/usuarios/UserScreen.jsx';
+import EmployeeScreen from './src/screens/private/usuarios/UserScreen.jsx';
+import RanchosScreen from './src/screens/private/ranchos/RanchosScreen.jsx';
+import VehiculosScreen from './src/screens/private/vehiculos/VehiculosScreen.jsx'; 
+import InventarioScreen from './src/screens/private/inventario/InventarioScreen.jsx';
+import AsistenciaScreen from './src/screens/private/asistencias/AsistenciaScreen.jsx';
+import ContactosScreen from './src/screens/private/contactos/ContactosScreen.jsx';
+import ContactosDispositivoScreen from './src/screens/private/contactos/ContactosDispositivoScreen.jsx';
+import CortesScreen from './src/screens/private/cortes/CortesScreen.jsx';
 
 // Creamos el Stack Navigator
 const Stack = createStackNavigator();

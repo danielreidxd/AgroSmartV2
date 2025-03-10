@@ -15,47 +15,47 @@ function MenuPrincipalScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.menuContainer}>
         <View style={styles.row}>
           <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Asistencia')}>
-            <Image source={require('../assets/asistencia.jpg')} style={styles.image} />
+            <Image source={require('../../../assets/asistencia.jpg')} style={styles.image} />
             <Text style={styles.menuText}>Asistencia</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Inventario')}>
-            <Image source={require('../assets/inventario.jpg')} style={styles.image} />
+            <Image source={require('../../../assets/inventario.jpg')} style={styles.image} />
             <Text style={styles.menuText}>Inventario</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.row}>
           <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Ranchos')}>
-            <Image source={require('../assets/ranchos.jpg')} style={styles.image} />
+            <Image source={require('../../../assets/ranchos.jpg')} style={styles.image} />
             <Text style={styles.menuText}>Ranchos</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Empleados')}>
-            <Image source={require('../assets/empleados.jpg')} style={styles.image} />
+            <Image source={require('../../../assets/empleados.jpg')} style={styles.image} />
             <Text style={styles.menuText}>Empleados</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.row}>
           <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Usuarios')}>
-            <Image source={require('../assets/usuarios.jpg')} style={styles.image} />
+            <Image source={require('../../../assets/usuarios.jpg')} style={styles.image} />
             <Text style={styles.menuText}>Usuarios</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Vehiculos')}>
-            <Image source={require('../assets/vehiculos.jpg')} style={styles.image} />
+            <Image source={require('../../../assets/vehiculos.jpg')} style={styles.image} />
             <Text style={styles.menuText}>Vehículos</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.row}>
           <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Nominas')}>
-            <Image source={require('../assets/nominas.jpg')} style={styles.image} />
+            <Image source={require('../../../assets/nominas.jpg')} style={styles.image} />
             <Text style={styles.menuText}>Nóminas</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Contactos')}>
-            <Image source={require('../assets/contactos.jpg')} style={styles.image} />
+            <Image source={require('../../../assets/contactos.jpg')} style={styles.image} />
             <Text style={styles.menuText}>Contactos</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.row}>
           <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Cortes')}>
-            <Image source={require('../assets/cortes.jpg')} style={styles.image} />
+            <Image source={require('../../../assets/cortes.jpg')} style={styles.image} />
             <Text style={styles.menuText}>Cortes</Text>
           </TouchableOpacity>
         </View>
