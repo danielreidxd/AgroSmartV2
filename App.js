@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Login from './src/screens/public/Login.jsx';
 import MenuPrincipalScreen from './src/screens/private/MenuPrincipalScreen.jsx';
 import UserScreen from './src/screens/private/usuarios/UserScreen.jsx';
-import EmployeeScreen from './src/screens/private/usuarios/UserScreen.jsx';
+import EmployeeScreen from './src/screens/private/empleados/EmployeeScreen.jsx';
 import RanchosScreen from './src/screens/private/ranchos/RanchosScreen.jsx';
 import VehiculosScreen from './src/screens/private/vehiculos/VehiculosScreen.jsx'; 
 import InventarioScreen from './src/screens/private/inventario/InventarioScreen.jsx';
@@ -14,7 +14,6 @@ import ContactosScreen from './src/screens/private/contactos/ContactosScreen.jsx
 import ContactosDispositivoScreen from './src/screens/private/contactos/ContactosDispositivoScreen.jsx';
 import CortesScreen from './src/screens/private/cortes/CortesScreen.jsx';
 
-// Creamos el Stack Navigator
 const Stack = createStackNavigator();
 
 export default function App() {

@@ -4,20 +4,30 @@ import { Ionicons } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword, deleteUser } from 'firebase/auth';
 import { auth, db } from '../../../../firebaseConfig';
 import { collection, getDocs, doc, setDoc, deleteDoc } from 'firebase/firestore';
-import  Usuario from "../../../models/Usuario.model.ts"
-import { getUsers } from '../../../services/Usuarios.service.js';
+import { getUsers } from '../../../services/Usuarios.service.js'; 
+import RenderUser from '../../../components/RenderUser'; 
 
 function UserScreen({ navigation }) {
   const [registerModalVisible, setRegisterModalVisible] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [users, setUsers] = useState<Usuario>([]);
+  const [users, setUsers] = useState([]);
+
+
+  const fetchUsers = async () => {
+    try {
+      const data = await getUsers();
+      console.log('Usuarios cargados en UserScreen:', data);  
+      setUsers(data);  
+    } catch (error) {
+      console.error('Error al obtener usuarios:', error);
+    }
+  };
 
   useEffect(() => {
-    setUsers = getUsers();
+    fetchUsers(); 
   }, []);
-
 
   const handleRegister = async () => {
     if (!email || !password || !name) {
@@ -40,7 +50,7 @@ function UserScreen({ navigation }) {
       setEmail('');
       setPassword('');
       setName('');
-      fetchUsers(); // Actualiza la lista de usuarios
+      fetchUsers(); 
     } catch (error) {
       Alert.alert('Error', error.message);
     }
@@ -48,33 +58,19 @@ function UserScreen({ navigation }) {
 
   const handleDelete = async (userId) => {
     try {
-      // Eliminar de Firestore
       await deleteDoc(doc(db, 'users', userId));
 
-      // Opcional: Eliminar de Firebase Authentication
       const userToDelete = auth.currentUser;
       if (userToDelete && userToDelete.uid === userId) {
         await deleteUser(userToDelete);
       }
 
       Alert.alert('Éxito', 'Usuario eliminado correctamente');
-      fetchUsers(); // Actualiza la lista de usuarios
+      fetchUsers(); 
     } catch (error) {
       Alert.alert('Error', 'No se pudo eliminar el usuario.');
     }
   };
-
-  const renderUser = ({ item }) => (
-    <View style={styles.userItem}>
-      <View style={styles.userInfo}>
-        <Text style={styles.userName}>{item.nombre}</Text>
-        <Text style={styles.userEmail}>{item.correo}</Text>
-      </View>
-      <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.id)}>
-        <Ionicons name="trash" size={20} color="#fff" />
-      </TouchableOpacity>
-    </View>
-  );
 
   return (
     <View style={styles.container}>
@@ -89,13 +85,12 @@ function UserScreen({ navigation }) {
       </View>
 
       <FlatList
-        data={users}
-        renderItem={renderUser}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.userList}
-      />
+        data={users}  
+        keyExtractor={(item) => item.id}  
+        renderItem={({ item }) => (
+          <RenderUser user={item} onDelete={handleDelete} />  
+        )}/>
 
-      {/* Modal para Registrar Usuario */}
       {registerModalVisible && (
         <View style={styles.modalContainer}>
           <View style={styles.modalView}>
@@ -104,13 +99,13 @@ function UserScreen({ navigation }) {
               style={styles.input}
               placeholder="Nombre"
               value={name}
-              onChangeText={(text) => setName(text)}
+              onChangeText={setName}
             />
             <TextInput
               style={styles.input}
               placeholder="Correo Electrónico"
               value={email}
-              onChangeText={(text) => setEmail(text)}
+              onChangeText={setEmail}
               keyboardType="email-address"
               autoCapitalize="none"
             />
@@ -118,7 +113,7 @@ function UserScreen({ navigation }) {
               style={styles.input}
               placeholder="Contraseña"
               value={password}
-              onChangeText={(text) => setPassword(text)}
+              onChangeText={setPassword}
               secureTextEntry
             />
             <TouchableOpacity style={styles.updateButton} onPress={handleRegister}>
@@ -159,36 +154,11 @@ const styles = StyleSheet.create({
   addButton: {
     marginLeft: 'auto',
   },
-  userList: {
-    paddingBottom: 20,
-  },
-  userItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#1c1c1c',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  userInfo: {
-    flex: 1,
-  },
-  userName: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  userEmail: {
-    color: '#a9a9a9',
-  },
-  deleteButton: {
-    backgroundColor: '#ff6347',
-    padding: 8,
-    borderRadius: 5,
-  },
+ 
   modalContainer: {
     position: 'absolute',
-    width: '100%',
-    height: '100%',
+    width: '110%',
+    height: '110%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',

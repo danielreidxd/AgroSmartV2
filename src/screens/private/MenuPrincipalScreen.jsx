@@ -7,10 +7,12 @@ function MenuPrincipalScreen({ navigation }) {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         {/* Flecha de regreso personalizada */}
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <Text style={[styles.title, styles.menuTitle]}>Menú principal</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ paddingTop: 1 }}>
+  <Ionicons name="arrow-back" size={24} color="#fff" />
+</TouchableOpacity>
+
+<Text style={[styles.title, styles.menuTitle, { paddingTop: 15 }]}>Menú principal</Text>
+
       </View>
       <ScrollView contentContainerStyle={styles.menuContainer}>
         <View style={styles.row}>
@@ -83,12 +85,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   menuTitle: {
-    marginLeft: 10, // Espacio para separar la flecha del título
+    marginLeft: 15, 
   },
   menuContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20, // Ajuste para dar espacio a la cabecera
+    marginTop: 20, 
   },
   row: {
     flexDirection: 'row',

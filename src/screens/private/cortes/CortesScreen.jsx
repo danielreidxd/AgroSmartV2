@@ -20,6 +20,7 @@ function CortesScreen({ navigation }) {
   const [evidencia, setEvidencia] = useState(null);
 
   useEffect(() => {
+
     const fetchCortes = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, 'cortes'));

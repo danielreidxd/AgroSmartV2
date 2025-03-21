@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
-import { auth } from '../../../firebaseConfig'; // Importar la configuración de Firebase
-import { signInWithEmailAndPassword } from 'firebase/auth'; // Importar la función de autenticación de Firebase
+import { auth } from '../../../firebaseConfig'; 
+import { signInWithEmailAndPassword } from 'firebase/auth'; 
 
 function Login({ navigation }) {
   const [email, setEmail] = useState('');
@@ -13,14 +13,14 @@ function Login({ navigation }) {
       return;
     }
 
-    // Iniciar sesión con Firebase
+    
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Inicio de sesión exitoso, navegar al menú principal
+        
         navigation.navigate('MenuPrincipal');
       })
       .catch((error) => {
-        // Mostrar un mensaje de error si ocurre un problema
+        
         Alert.alert('Error al iniciar sesión', error.message);
       });
   };
