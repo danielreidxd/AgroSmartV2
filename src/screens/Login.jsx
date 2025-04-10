@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
-import { auth } from '../../../firebaseConfig'; 
+import { auth } from '../../firebaseConfig'; 
 import { signInWithEmailAndPassword } from 'firebase/auth'; 
 
 function Login({ navigation }) {
@@ -28,7 +28,7 @@ function Login({ navigation }) {
   return (
     <View style={styles.container}>
       {/* Logo con restricciones de tamaño */}
-      <Image source={require('../../../assets/logo.jpg')} style={styles.logo} />
+      <Image source={require('../../assets/logo.jpg')} style={styles.logo} />
 
       {/* Título */}
       <Text style={styles.title}>Inicia Sesión</Text>

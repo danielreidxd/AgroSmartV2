@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, TextInput, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword, deleteUser } from 'firebase/auth';
-import { auth, db } from '../../../../firebaseConfig';
+import { auth, db } from '../../../firebaseConfig';
 import { collection, getDocs, doc, setDoc, deleteDoc } from 'firebase/firestore';
-import { getUsers } from '../../../services/Usuarios.service.js'; 
-import RenderUser from '../../../components/RenderUser'; 
+import { getUsers } from '../../controllers//UsuariosController.js'; 
+import RenderUser from '../../components/RenderUser'; 
 
 function UserScreen({ navigation }) {
   const [registerModalVisible, setRegisterModalVisible] = useState(false);

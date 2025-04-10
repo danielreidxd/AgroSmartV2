@@ -7,57 +7,47 @@ function MenuPrincipalScreen({ navigation }) {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         {/* Flecha de regreso personalizada */}
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ paddingTop: 1 }}>
-  <Ionicons name="arrow-back" size={24} color="#fff" />
-</TouchableOpacity>
-
-<Text style={[styles.title, styles.menuTitle, { paddingTop: 15 }]}>Menú principal</Text>
-
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#fff" />
+        </TouchableOpacity>
+        <Text style={[styles.title, styles.menuTitle]}>Menú principal</Text>
       </View>
       <ScrollView contentContainerStyle={styles.menuContainer}>
         <View style={styles.row}>
-          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Asistencia')}>
-            <Image source={require('../../../assets/asistencia.jpg')} style={styles.image} />
-            <Text style={styles.menuText}>Asistencia</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Inventario')}>
-            <Image source={require('../../../assets/inventario.jpg')} style={styles.image} />
-            <Text style={styles.menuText}>Inventario</Text>
-          </TouchableOpacity>
         </View>
         <View style={styles.row}>
           <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Ranchos')}>
-            <Image source={require('../../../assets/ranchos.jpg')} style={styles.image} />
+            <Image source={require('../../assets/ranchos.jpg')} style={styles.image} />
             <Text style={styles.menuText}>Ranchos</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Empleados')}>
-            <Image source={require('../../../assets/empleados.jpg')} style={styles.image} />
+            <Image source={require('../../assets/empleados.jpg')} style={styles.image} />
             <Text style={styles.menuText}>Empleados</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.row}>
           <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Usuarios')}>
-            <Image source={require('../../../assets/usuarios.jpg')} style={styles.image} />
+            <Image source={require('../../assets/usuarios.jpg')} style={styles.image} />
             <Text style={styles.menuText}>Usuarios</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Vehiculos')}>
-            <Image source={require('../../../assets/vehiculos.jpg')} style={styles.image} />
+            <Image source={require('../../assets/vehiculos.jpg')} style={styles.image} />
             <Text style={styles.menuText}>Vehículos</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.row}>
           <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Nominas')}>
-            <Image source={require('../../../assets/nominas.jpg')} style={styles.image} />
+            <Image source={require('../../assets/nominas.jpg')} style={styles.image} />
             <Text style={styles.menuText}>Nóminas</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Contactos')}>
-            <Image source={require('../../../assets/contactos.jpg')} style={styles.image} />
+            <Image source={require('../../assets/contactos.jpg')} style={styles.image} />
             <Text style={styles.menuText}>Contactos</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.row}>
           <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Cortes')}>
-            <Image source={require('../../../assets/cortes.jpg')} style={styles.image} />
+            <Image source={require('../../assets/cortes.jpg')} style={styles.image} />
             <Text style={styles.menuText}>Cortes</Text>
           </TouchableOpacity>
         </View>
@@ -85,12 +75,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   menuTitle: {
-    marginLeft: 15, 
+    marginLeft: 10, // Espacio para separar la flecha del título
   },
   menuContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20, 
+    marginTop: 20, // Ajuste para dar espacio a la cabecera
   },
   row: {
     flexDirection: 'row',

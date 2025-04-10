@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FlatList, Modal, TextInput, Alert, StyleSheet, TouchableOpacity, Text, View } from 'react-native';
-import RenderEmployee from '../../../components/RenderEmployee'; 
-import { getEmployee, addEmployee, updateEmployee, deleteEmployee } from '../../../services/Employee.service.js'; 
+import RenderEmployee from '../../components/RenderEmployee'; 
+import { getEmployee, addEmployee, updateEmployee, deleteEmployee } from '../../controllers/EmployeeController.js'; 
 import { Ionicons } from '@expo/vector-icons';
 
 function EmployeeScreen({ navigation }) {
