@@ -1,203 +1,176 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, TextInput, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, TextInput, Alert, FlatList, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { createUserWithEmailAndPassword, deleteUser } from 'firebase/auth';
-import { auth, db } from '../../../firebaseConfig';
-import { collection, getDocs, doc, setDoc, deleteDoc } from 'firebase/firestore';
-import { getUsers } from '../../controllers//UsuariosController.js'; 
-import RenderUser from '../../components/RenderUser'; 
+import { getUsers, registerUser, removeUser } from '../../controllers/UserController';
+import RenderUser from '../../components/RenderUser';
+import styles from './UserScreen.styles';
 
-function UserScreen({ navigation }) {
-  const [registerModalVisible, setRegisterModalVisible] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
+const UserScreen = ({ navigation }) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: ''
+  });
   const [users, setUsers] = useState([]);
-
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   const fetchUsers = async () => {
     try {
-      const data = await getUsers();
-      console.log('Usuarios cargados en UserScreen:', data);  
-      setUsers(data);  
+      const usersData = await getUsers();
+      setUsers(usersData);
+      console.log('Usuarios cargados:', usersData);
     } catch (error) {
-      console.error('Error al obtener usuarios:', error);
+      Alert.alert('Error', error.message);
+      console.error('Error al cargar usuarios:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
     }
   };
 
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchUsers();
+  };
+
   useEffect(() => {
-    fetchUsers(); 
-  }, []);
+    const unsubscribe = navigation.addListener('focus', fetchUsers);
+    return unsubscribe;
+  }, [navigation]);
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
 
   const handleRegister = async () => {
-    if (!email || !password || !name) {
-      Alert.alert('Error', 'Por favor, completa todos los campos.');
-      return;
-    }
-
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      await setDoc(doc(db, 'users', user.uid), {
-        nombre: name,
-        correo: email,
-        createdAt: new Date(),
-      });
-
-      Alert.alert('Éxito', 'Usuario registrado con éxito');
-      setRegisterModalVisible(false);
-      setEmail('');
-      setPassword('');
-      setName('');
-      fetchUsers(); 
+      await registerUser(formData.email, formData.password, formData.name);
+      Alert.alert('Éxito', 'Usuario registrado correctamente');
+      setModalVisible(false);
+      setFormData({ name: '', email: '', password: '' });
+      fetchUsers();
     } catch (error) {
       Alert.alert('Error', error.message);
     }
   };
 
   const handleDelete = async (userId) => {
-    try {
-      await deleteDoc(doc(db, 'users', userId));
-
-      const userToDelete = auth.currentUser;
-      if (userToDelete && userToDelete.uid === userId) {
-        await deleteUser(userToDelete);
-      }
-
-      Alert.alert('Éxito', 'Usuario eliminado correctamente');
-      fetchUsers(); 
-    } catch (error) {
-      Alert.alert('Error', 'No se pudo eliminar el usuario.');
-    }
+    Alert.alert(
+      'Confirmar',
+      '¿Estás seguro de eliminar este usuario?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Eliminar', onPress: async () => {
+          try {
+            await removeUser(userId);
+            Alert.alert('Éxito', 'Usuario eliminado');
+            fetchUsers();
+          } catch (error) {
+            Alert.alert('Error', error.message);
+          }
+        }}
+      ]
+    );
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+      {/* Header estilo empleados */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={26} color="white" />
         </TouchableOpacity>
         <Text style={styles.title}>Usuarios</Text>
-        <TouchableOpacity style={styles.addButton} onPress={() => setRegisterModalVisible(true)}>
-          <Ionicons name="add-circle" size={30} color="#6c5ce7" />
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <Ionicons name="add" size={24} color="white" />
         </TouchableOpacity>
       </View>
 
-      <FlatList
-        data={users}  
-        keyExtractor={(item) => item.id}  
-        renderItem={({ item }) => (
-          <RenderUser user={item} onDelete={handleDelete} />  
-        )}/>
-
-      {registerModalVisible && (
-        <View style={styles.modalContainer}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalTitle}>Registrar Usuario</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Nombre"
-              value={name}
-              onChangeText={setName}
+      {/* Lista de usuarios */}
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#6c5ce7" />
+        </View>
+      ) : (
+        <FlatList
+          data={users}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <RenderUser 
+              user={item} 
+              onDelete={handleDelete} 
             />
+          )}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>No hay usuarios registrados</Text>
+          }
+          contentContainerStyle={styles.listContent}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+        />
+      )}
+
+      {/* Modal de registro */}
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Registrar Nuevo Usuario</Text>
+            
             <TextInput
               style={styles.input}
-              placeholder="Correo Electrónico"
-              value={email}
-              onChangeText={setEmail}
+              placeholder="Nombre completo"
+              value={formData.name}
+              onChangeText={(text) => handleInputChange('name', text)}
+              placeholderTextColor="#aaa"
+            />
+            
+            <TextInput
+              style={styles.input}
+              placeholder="Correo electrónico"
+              value={formData.email}
+              onChangeText={(text) => handleInputChange('email', text)}
               keyboardType="email-address"
               autoCapitalize="none"
+              placeholderTextColor="#aaa"
             />
+            
             <TextInput
               style={styles.input}
-              placeholder="Contraseña"
-              value={password}
-              onChangeText={setPassword}
+              placeholder="Contraseña (mínimo 6 caracteres)"
+              value={formData.password}
+              onChangeText={(text) => handleInputChange('password', text)}
               secureTextEntry
+              placeholderTextColor="#aaa"
             />
-            <TouchableOpacity style={styles.updateButton} onPress={handleRegister}>
-              <Text style={styles.updateButtonText}>Registrar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.updateButton, styles.cancelButton]}
-              onPress={() => setRegisterModalVisible(false)}
-            >
-              <Text style={styles.updateButtonText}>Cancelar</Text>
-            </TouchableOpacity>
+            
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity 
+                style={[styles.button, styles.cancelButton]} 
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.buttonText}>Cancelar</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={[styles.button, styles.saveButton]} 
+                onPress={handleRegister}
+                disabled={!formData.name || !formData.email || !formData.password}
+              >
+                <Text style={styles.buttonText}>Guardar</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      )}
+      </Modal>
     </View>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0d0d0d',
-    padding: 20,
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  backButton: {
-    marginRight: 10,
-  },
-  title: {
-    fontSize: 24,
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  addButton: {
-    marginLeft: 'auto',
-  },
- 
-  modalContainer: {
-    position: 'absolute',
-    width: '110%',
-    height: '110%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalView: {
-    width: '90%',
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  input: {
-    width: '100%',
-    padding: 10,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 15,
-  },
-  updateButton: {
-    backgroundColor: '#6c5ce7',
-    padding: 10,
-    borderRadius: 5,
-    width: '100%',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  cancelButton: {
-    backgroundColor: '#ff6347',
-  },
-  updateButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-});
+};
 
 export default UserScreen;

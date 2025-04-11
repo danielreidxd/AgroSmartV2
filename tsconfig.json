@@ -10,7 +10,9 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true
+    "noEmit": true,
+    "types": ["node", "jest"],  // Añade esto
+    "lib": ["es6", "dom"]       // Añade esto para soporte de DOM
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"],

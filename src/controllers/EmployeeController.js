@@ -1,58 +1,76 @@
-import { db } from '../../firebaseConfig';  
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+// src/controllers/EmployeeController.js
+import { 
+  fetchEmployeesFromDB,
+  createEmployeeInDB,
+  updateEmployeeInDB,
+  deleteEmployeeFromDB
+} from '../services/EmployeeService';
 
-export const getEmployee = async () => {
+/**
+ * Obtiene empleados con posible filtrado
+ * @param {boolean} [activeOnly=false] - Solo empleados activos
+ * @returns {Promise<Array>}
+ */
+export const getEmployees = async (activeOnly = false) => {
   try {
-    const querySnapshot = await getDocs(collection(db, 'employee'));
-    const employeeList = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    return employeeList;
+    const employees = await fetchEmployeesFromDB();
+    return activeOnly ? employees.filter(e => e.status) : employees;
   } catch (error) {
-    console.error('Error fetching employees:', error);
-    throw new Error('No se pudieron obtener los empleados');
+    console.error('Controller Error - getEmployees:', error);
+    throw new Error('Error al obtener empleados');
   }
 };
 
-export const addEmployee = async (employeeData) => {
-  const { nombre, rol, status } = employeeData;
+/**
+ * Valida y crea un empleado
+ * @param {Object} employeeData 
+ * @returns {Promise<Object>}
+ */
+export const createEmployee = async (employeeData) => {
+  if (!employeeData.nombre || !employeeData.rol) {
+    throw new Error('Nombre y rol son requeridos');
+  }
 
   try {
-    const docRef = await addDoc(collection(db, 'employee'), {
-      nombre,
-      rol,
-      status,
+    return await createEmployeeInDB({
+      ...employeeData,
+      status: employeeData.status ?? true
     });
-    return { id: docRef.id, ...employeeData };
   } catch (error) {
-    console.error('Error adding employee:', error);
-    throw new Error('No se pudo agregar el empleado');
+    console.error('Controller Error - createEmployee:', error);
+    throw new Error('Error al crear empleado');
   }
 };
 
-export const updateEmployee = async (employeeId, employeeData) => {
-  const { nombre, rol, status } = employeeData;
-
+/**
+ * Actualiza un empleado con validación
+ * @param {string} id 
+ * @param {Object} updates 
+ * @returns {Promise<void>}
+ */
+export const updateEmployee = async (id, updates) => {
+  if (!id) throw new Error('ID de empleado requerido');
+  
   try {
-    await updateDoc(doc(db, 'employee', employeeId), {
-      nombre,
-      rol,
-      status,
-    });
-    return { id: employeeId, ...employeeData };
+    await updateEmployeeInDB(id, updates);
   } catch (error) {
-    console.error('Error updating employee:', error);
-    throw new Error('No se pudo actualizar el empleado');
+    console.error('Controller Error - updateEmployee:', error);
+    throw new Error('Error al actualizar empleado');
   }
 };
 
-export const deleteEmployee = async (employeeId) => {
+/**
+ * Elimina un empleado
+ * @param {string} id 
+ * @returns {Promise<void>}
+ */
+export const deleteEmployee = async (id) => {
+  if (!id) throw new Error('ID de empleado requerido');
+  
   try {
-    await deleteDoc(doc(db, 'employee', employeeId));
-    return employeeId;
+    await deleteEmployeeFromDB(id);
   } catch (error) {
-    console.error('Error deleting employee:', error);
-    throw new Error('No se pudo eliminar el empleado');
+    console.error('Controller Error - deleteEmployee:', error);
+    throw new Error('Error al eliminar empleado');
   }
 };

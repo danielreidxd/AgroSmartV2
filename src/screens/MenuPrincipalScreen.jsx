@@ -6,9 +6,8 @@ function MenuPrincipalScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        {/* Flecha de regreso personalizada */}
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons name="arrow-back" size={26} color="#fff" />
         </TouchableOpacity>
         <Text style={[styles.title, styles.menuTitle]}>Menú principal</Text>
       </View>
@@ -59,14 +58,13 @@ function MenuPrincipalScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0d0d0d',
+    backgroundColor: '#121212',
     padding: 20,
-    justifyContent: 'center',
   },
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 40,
+    marginTop: 20,
   },
   title: {
     fontSize: 24,
@@ -75,17 +73,17 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   menuTitle: {
-    marginLeft: 10, // Espacio para separar la flecha del título
+    marginLeft: 50, 
   },
   menuContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20, // Ajuste para dar espacio a la cabecera
+    marginTop: 20, 
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 20,
+    marginBottom: 2,
     width: '100%',
   },
   menuItem: {
@@ -95,13 +93,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 5,
+    margin: 10,
     padding: 10,
   },
   image: {
     width: 80,
     height: 80,
-    marginBottom: 10,
+    marginBottom: 5,
   },
   menuText: {
     color: '#fff',

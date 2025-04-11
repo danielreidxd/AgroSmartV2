@@ -1,284 +1,171 @@
+
 import React, { useState, useEffect } from 'react';
-import { FlatList, Modal, TextInput, Alert, StyleSheet, TouchableOpacity, Text, View } from 'react-native';
-import RenderEmployee from '../../components/RenderEmployee'; 
-import { getEmployee, addEmployee, updateEmployee, deleteEmployee } from '../../controllers/EmployeeController.js'; 
+import { View, Text, FlatList, Modal, TextInput, Alert, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { getEmployees, createEmployee, updateEmployee, deleteEmployee } from '../../controllers/EmployeeController';
+import EmployeeItem from '../../components/EmployeeItem';
+import styles from './EmployeeScreen.styles';
 
-function EmployeeScreen({ navigation }) {
+export default function EmployeeScreen({ navigation }) {
   const [employees, setEmployees] = useState([]);
-  const [registerModalVisible, setRegisterModalVisible] = useState(false); 
-  const [employeeName, setEmployeeName] = useState('');
-  const [employeeRole, setEmployeeRole] = useState('');
-  const [employeeStatus, setEmployeeStatus] = useState(true); 
-  const [editingEmployee, setEditingEmployee] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [currentEmployee, setCurrentEmployee] = useState(null);
+  const [form, setForm] = useState({ nombre: '', rol: '', status: true });
 
+  // Cargar empleados
   useEffect(() => {
-    const fetchEmployee = async () => {
-      try {
-        const employees = await getEmployee();
-        console.log('Employees:', employees); // Verifica que los datos se carguen correctamente
-        setEmployees(employees);
-      } catch (error) {
-        console.error('Error fetching employees:', error);
-      }
-    };
-    fetchEmployee();
+    loadEmployees();
   }, []);
 
-  const handleDelete = async (id) => {
+  const loadEmployees = async () => {
+    setIsLoading(true);
     try {
-      await deleteEmployee(id); // Elimina el empleado
-      setEmployees((prevEmployees) => prevEmployees.filter((emp) => emp.id !== id)); // Actualiza la lista de empleados
-      Alert.alert('Empleado eliminado', 'El empleado ha sido eliminado correctamente.');
+      const data = await getEmployees();
+      setEmployees(data);
     } catch (error) {
-      console.error('Error al eliminar el empleado:', error);
-      Alert.alert('Error', 'No se pudo eliminar el empleado. Inténtalo de nuevo.');
+      Alert.alert('Error', error.message);
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const handleFormChange = (field, value) => {
+    setForm(prev => ({ ...prev, [field]: value }));
   };
 
   const handleEdit = (employee) => {
-    setEditingEmployee(employee);
-    setEmployeeName(employee.nombre);
-    setEmployeeRole(employee.rol);
-    setEmployeeStatus(employee.status);
-    setRegisterModalVisible(true); // Abre el modal
+    setCurrentEmployee(employee);
+    setForm({
+      nombre: employee.nombre,
+      rol: employee.rol,
+      status: employee.status
+    });
+    setModalVisible(true);
   };
 
-  const handleSave = async () => {
+  const handleSubmit = async () => {
     try {
-      if (editingEmployee) {
-        // Si se está editando un empleado, actualiza sus datos en Firebase
-        await updateEmployee(editingEmployee.id, {
-          nombre: employeeName,
-          rol: employeeRole,
-          status: employeeStatus,
-        });
-
-        // Actualiza la lista de empleados en el estado local
-        setEmployees((prevEmployees) =>
-          prevEmployees.map((emp) =>
-            emp.id === editingEmployee.id
-              ? { ...emp, nombre: employeeName, rol: employeeRole, status: employeeStatus }
-              : emp
-          )
-        );
-
-        Alert.alert('Empleado actualizado', 'Los detalles del empleado han sido actualizados.');
+      if (currentEmployee) {
+        await updateEmployee(currentEmployee.id, form);
+        Alert.alert('Éxito', 'Empleado actualizado');
       } else {
-        // Si no se está editando, agrega un nuevo empleado a Firebase
-        const newEmployee = {
-          nombre: employeeName,
-          rol: employeeRole,
-          status: employeeStatus,
-        };
-
-        const docRef = await addEmployee(newEmployee);
-
-        // Agrega el nuevo empleado a la lista
-        setEmployees((prevEmployees) => [...prevEmployees, { id: docRef.id, ...newEmployee }]);
-
-        Alert.alert('Empleado agregado', 'El nuevo empleado ha sido agregado.');
+        await createEmployee(form);
+        Alert.alert('Éxito', 'Empleado creado');
       }
-
-
-      
-      setRegisterModalVisible(false);
-      setEmployeeName('');
-      setEmployeeRole('');
-      setEmployeeStatus(true);
-      setEditingEmployee(null);
+      loadEmployees();
+      closeModal();
     } catch (error) {
-      console.error('Error al guardar el empleado:', error);
-      Alert.alert('Error', 'No se pudo guardar el empleado. Inténtalo de nuevo.');
+      Alert.alert('Error', error.message);
     }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteEmployee(id);
+      Alert.alert('Éxito', 'Empleado eliminado');
+      loadEmployees();
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+    setCurrentEmployee(null);
+    setForm({ nombre: '', rol: '', status: true });
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.title}>Empleados</Text>
-        <TouchableOpacity style={styles.addButton} onPress={() => setRegisterModalVisible(true)}>
-          <Ionicons name="add-circle" size={30} color="#6c5ce7" />
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <Ionicons name="add" size={24} color="white" />
         </TouchableOpacity>
       </View>
 
-      <FlatList
-        data={employees}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <RenderEmployee 
-            employee={item} 
-            onDelete={handleDelete} 
-            onEdit={handleEdit} 
-          />
-        )}
-      />
+      {/* Lista */}
+      {isLoading ? (
+        <ActivityIndicator size="large" style={styles.loader} />
+      ) : (
+        <FlatList
+          data={employees}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => (
+            <EmployeeItem 
+              employee={item} 
+              onEdit={() => handleEdit(item)}
+              onDelete={() => handleDelete(item.id)}
+            />
+          )}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>No hay empleados registrados</Text>
+          }
+        />
+      )}
 
-      {registerModalVisible && (
-        <View style={styles.modalBackground}>
-          <View style={styles.modalContainer}>
+      {/* Modal de formulario */}
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={closeModal}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>
-              {editingEmployee ? 'Editar Empleado' : 'Agregar Empleado'}
+              {currentEmployee ? 'Editar Empleado' : 'Nuevo Empleado'}
             </Text>
 
-            {/* Campo para el nombre */}
             <TextInput
               style={styles.input}
               placeholder="Nombre"
-              value={employeeName}
-              onChangeText={setEmployeeName}
+              value={form.nombre}
+              onChangeText={text => handleFormChange('nombre', text)}
             />
 
-            {/* Campo para el rol */}
             <TextInput
               style={styles.input}
               placeholder="Rol"
-              value={employeeRole}
-              onChangeText={setEmployeeRole}
+              value={form.rol}
+              onChangeText={text => handleFormChange('rol', text)}
             />
 
-            <View style={styles.statusContainer}>
-              <Text style={styles.statusLabel}>Estado:</Text>
-              <TouchableOpacity
-                style={[
-                  styles.statusButton,
-                  employeeStatus ? styles.activeButton : styles.inactiveButton,
-                ]}
-                onPress={() => setEmployeeStatus(!employeeStatus)}
-              >
-                <Text style={styles.statusButtonText}>
-                  {employeeStatus ? 'Activo' : 'Inactivo'}
-                </Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              style={[
+                styles.statusButton,
+                form.status ? styles.statusActive : styles.statusInactive
+              ]}
+              onPress={() => handleFormChange('status', !form.status)}
+            >
+              <Text style={styles.statusText}>
+                {form.status ? 'Activo' : 'Inactivo'}
+              </Text>
+            </TouchableOpacity>
 
-            {/* Botones de acción */}
-            <View style={styles.modalActions}>
-              <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-                <Text style={styles.saveButtonText}>Guardar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.cancelButton}
-                onPress={() => setRegisterModalVisible(false)}
+            <View style={styles.buttonGroup}>
+              <TouchableOpacity 
+                style={[styles.button, styles.cancelButton]} 
+                onPress={closeModal}
               >
-                <Text style={styles.cancelButtonText}>Cancelar</Text>
+                <Text style={styles.buttonText}>Cancelar</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={[styles.button, styles.saveButton]} 
+                onPress={handleSubmit}
+              >
+                <Text style={styles.buttonText}>Guardar</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
-      )}
+      </Modal>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0d0d0d',
-    padding: 20,
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  backButton: {
-    marginRight: 10,
-  },
-  title: {
-    fontSize: 24,
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  addButton: {
-    marginLeft: 'auto',
-  },
-  modalBackground: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  modalContainer: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 8,
-    width: '80%',
-    alignItems: 'center',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  input: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    marginBottom: 10,
-    paddingLeft: 8,
-    borderRadius: 5,
-    width: '100%',
-  },
-  statusContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  statusLabel: {
-    fontSize: 16,
-    marginRight: 10,
-  },
-  statusButton: {
-    padding: 8,
-    borderRadius: 5,
-  },
-  activeButton: {
-    backgroundColor: '#2ecc71',
-  },
-  inactiveButton: {
-    backgroundColor: '#e74c3c',
-  },
-  statusButtonText: {
-    color: 'white',
-    fontSize: 14,
-  },
-  modalActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-  },
-  saveButton: {
-    backgroundColor: '#2ecc71',
-    padding: 10,
-    borderRadius: 5,
-    width: '45%',
-    alignItems: 'center',
-  },
-  saveButtonText: {
-    color: 'white',
-    fontSize: 16,
-  },
-  cancelButton: {
-    backgroundColor: '#e74c3c',
-    padding: 10,
-    borderRadius: 5,
-    width: '45%',
-    alignItems: 'center',
-  },
-  cancelButtonText: {
-    color: 'white',
-    fontSize: 16,
-  },
-});
-
-export default EmployeeScreen;

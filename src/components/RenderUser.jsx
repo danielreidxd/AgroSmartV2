@@ -4,43 +4,54 @@ import { Ionicons } from '@expo/vector-icons';
 
 const RenderUser = ({ user, onDelete }) => {
   return (
-    <View style={styles.card}>
-      <Text style={styles.name}>{user.nombre}</Text>
-      <Text style={styles.email}>{user.correo}</Text>
-      <TouchableOpacity onPress={() => onDelete(user.id)} style={styles.deleteButton}>
-        <Ionicons name="trash-outline" size={24} color="white" />
+    <View style={styles.container}>
+      <View style={styles.infoContainer}>
+        <Text style={styles.name}>{user.nombre}</Text>
+        <Text style={styles.email}>{user.correo}</Text>
+        <Text style={styles.date}>
+          Registrado el: {user.createdAt?.toLocaleDateString?.() || 'Fecha desconocida'}
+        </Text>
+      </View>
+      <TouchableOpacity 
+        style={styles.deleteButton} 
+        onPress={() => onDelete(user.id)}
+      >
+        <Ionicons name="trash-outline" size={20} color="#ff4757" />
       </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#fff',
+  container: {
+    backgroundColor: '#1e1e1e',
     padding: 15,
     marginBottom: 10,
     borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  infoContainer: {
+    flex: 1,
   },
   name: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '500',
+    marginBottom: 4,
   },
   email: {
+    color: '#aaa',
     fontSize: 14,
-    color: '#555',
+    marginBottom: 4,
+  },
+  date: {
+    color: '#666',
+    fontSize: 12,
   },
   deleteButton: {
-    marginTop: 10,
-    backgroundColor: '#e74c3c',
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
+    padding: 8,
   },
 });
 
