@@ -1,4 +1,4 @@
-// src/controllers/EmployeeController.js
+
 import { 
   fetchEmployeesFromDB,
   createEmployeeInDB,
@@ -9,7 +9,10 @@ import {
 /**
  * Obtiene empleados con posible filtrado
  * @param {boolean} [activeOnly=false] - Solo empleados activos
- * @returns {Promise<Array>}
+ * @returns {Promise<Array>}    
+ * 
+ * 
+ * 
  */
 export const getEmployees = async (activeOnly = false) => {
   try {
@@ -43,7 +46,7 @@ export const createEmployee = async (employeeData) => {
 };
 
 /**
- * Actualiza un empleado con validación
+ 
  * @param {string} id 
  * @param {Object} updates 
  * @returns {Promise<void>}
