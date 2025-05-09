@@ -59,6 +59,14 @@ function Login({ navigation }) {
       >
         <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+  <Text style={{ color: '#74b9ff', textAlign: 'center', marginTop: 10 }}>
+    ¿Olvidaste tu contraseña?
+  </Text>
+</TouchableOpacity>
+
+ 
     </View>
   );
 }

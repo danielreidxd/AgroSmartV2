@@ -11,6 +11,7 @@ import VehiculosScreen from './src/screens/vehiculos/VehiculosScreen.jsx';
 import ContactosScreen from './src/screens/contactos/ContactosScreen.jsx';
 import ContactosDispositivoScreen from './src/screens/contactos/ContactosDispositivoScreen.jsx';
 import CortesScreen from './src/screens/cortes/CortesScreen.jsx';
+import ForgotPasswordScreen from './src/screens/Auth/ForgotPasswordScreen.jsx';
 
 const Stack = createStackNavigator();
 
@@ -27,6 +28,7 @@ export default function App() {
         <Stack.Screen name="Contactos" component={ContactosScreen} />
         <Stack.Screen name="ContactosDispositivo" component={ContactosDispositivoScreen} />
         <Stack.Screen name="Cortes" component={CortesScreen} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
         
       </Stack.Navigator>
     </NavigationContainer>
